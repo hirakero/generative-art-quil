@@ -51,7 +51,9 @@
   (let [ps (for [x (range (- to from))]
              (let [rad (q/radians x)
                    x (+ x from)
-                   y (+ (* (q/sin rad) 40) 50)]
+                   ;y (+ (* (q/sin rad) 40) 50)
+                   ;y (+ (* (Math/pow (q/sin rad) 3) 30) 50)
+                   y (+ 50 (* (Math/pow (q/sin rad) 3) (q/noise (* rad 2)) 30))]
                {:x x :y y}))]
     (draw-line ps)))  
 
