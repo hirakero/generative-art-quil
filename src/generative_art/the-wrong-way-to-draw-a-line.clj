@@ -29,6 +29,21 @@
       (let [[{x1 :x, y1 :y} {x2 :x, y2 :y}] p]
         (q/line x1 y1 x2 y2)))))
 
+(defn draw-noise []
+  "list 3.1 perlin noise" 
+  (let [half-height (/ (q/height) 2)
+        make-point (fn [col x]
+                     (let [y-noise (:y-noise (last col))
+                           y (+ (* (q/noise y-noise)
+                                   80)
+                                10)] ;10 ~ 90
+                       (conj col {:x x, :y y, :y-noise (+ y-noise 0.1)})))
+        ps (reduce make-point
+                   [{:x 0, :y half-height, :y-noise (rand-int 10)}]
+                   (range 10 (q/width) 10))]
+    (doseq [p (partition 2 1 ps)]
+      (let [[{x1 :x, y1 :y} {x2 :x, y2 :y}] p]
+        (q/line x1 y1 x2 y2)))))
 
 (defn setup []
   (q/frame-rate 30)
@@ -39,7 +54,8 @@
 
   (q/stroke 20 50 70)
   ;(draw-random)
-  (draw-smooth-random)
+  ;(draw-smooth-random)
+  (draw-noise)
   )
 
 (defn update-state [state])
