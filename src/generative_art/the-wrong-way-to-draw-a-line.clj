@@ -6,31 +6,32 @@
   (doseq [p (partition 2 1 points)]
     (let [[{x1 :x, y1 :y} {x2 :x, y2 :y}] p]
       (q/line x1 y1 x2 y2))))
- 
+
 (defn draw-random []
-    (let [step 10
-          border-y 10
-          ps (for [x (range 1 50)]
-               {:x (* x step)
-                :y (+ border-y
-                      (q/random (- (q/height)
-                                   (* border-y 2))))})]
-      (draw-line ps)))
+  (let [step 10
+        border-y 10
+        ps (for [x (range 1 50)]
+             {:x (* x step)
+              :y (+ border-y
+                    (q/random (- (q/height)
+                                 (* border-y 2))))})]
+    (draw-line ps)))
 
 (defn draw-smooth-random []
   (let [step 10
         make-point (fn [col n]
-                      (let [y-step  (- (q/random 20) 10) ; range -10 to 10
-                            y (+ (:y (last col)) 
-                                 y-step)]
-                        (conj col {:x n :y y}))) 
+                     (let [y-step  (- (q/random 20) 10) ; range -10 to 10
+                           y (+ (:y (last col))
+                                y-step)]
+                       (conj col {:x n :y y})))
         ps (reduce make-point
                    [{:x 0 :y (/ (q/height) 2)}]
                    (range 10 (q/width) step))]
     (draw-line ps)))
 
-(defn draw-noise [x-step y-noise-setep]
-  "list 3.1 perlin noise" 
+(defn draw-noise 
+  "list 3.1 perlin noise"
+  [x-step y-noise-setep]
   (let [half-height (/ (q/height) 2)
         make-point (fn [col x]
                      (let [y-noise (:y-noise (last col))
@@ -40,8 +41,19 @@
                        (conj col {:x x, :y y, :y-noise (+ y-noise y-noise-setep)})))
         ps (reduce make-point
                    [{:x 0, :y half-height, :y-noise (rand-int 10)}]
-                   (range 10 (q/width) x-step))]
+                   (range 0 (q/width) x-step))]
     (draw-line ps)))
+
+
+(defn sin-curve 
+  "list 3.2 sin curve"
+  [from to]
+  (let [ps (for [x (range (- to from))]
+             (let [rad (q/radians x)
+                   x (+ x from)
+                   y (+ (* (q/sin rad) 40) 50)]
+               {:x x :y y}))]
+    (draw-line ps)))  
 
 (defn setup []
   (q/frame-rate 30)
@@ -53,7 +65,8 @@
   (q/stroke 20 50 70)
   ;(draw-random)
   ;(draw-smooth-random)
-  (draw-noise 1 0.03)
+  ;(draw-noise 1 0.03)
+  (sin-curve 10 490)
   )
 
 (defn update-state [state])
@@ -66,5 +79,5 @@
   :setup setup
   :update update-state
   :draw draw-state
-  :features [:keep-on-top]
+  :features [:keep-on-top] 
   :middleware [m/fun-mode])
