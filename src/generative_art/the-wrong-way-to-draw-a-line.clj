@@ -2,6 +2,10 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
+(defn custom-random []
+  (- 1 (Math/pow (rand 1) 5)))
+(custom-random)
+
 (defn draw-line [points]
   (doseq [p (partition 2 1 points)]
     (let [[{x1 :x, y1 :y} {x2 :x, y2 :y}] p]
@@ -45,15 +49,13 @@
     (draw-line ps)))
 
 
-(defn sin-curve 
+(defn draw-graph 
   "list 3.2 sin curve"
-  [from to]
+  [f from to]
   (let [ps (for [x (range (- to from))]
              (let [rad (q/radians x)
                    x (+ x from)
-                   ;y (+ (* (q/sin rad) 40) 50)
-                   ;y (+ (* (Math/pow (q/sin rad) 3) 30) 50)
-                   y (+ 50 (* (Math/pow (q/sin rad) 3) (q/noise (* rad 2)) 30))]
+                   y (f rad)]
                {:x x :y y}))]
     (draw-line ps)))  
 
@@ -65,10 +67,14 @@
   (q/smooth)
 
   (q/stroke 20 50 70)
+
   ;(draw-random)
   ;(draw-smooth-random)
   ;(draw-noise 1 0.03)
-  (sin-curve 10 490)
+  ;(draw-graph (fn [rad] (+ (* (q/sin rad) 40) 50)) 10 490)
+  ;(draw-graph (fn [rad] (+ (* (Math/pow (q/sin rad) 3) 30) 50)) 10 490)
+  ;(draw-graph (fn [rad] (+ 50 (* (Math/pow (q/sin rad) 3) (q/noise (* rad 2)) 30))) 10 490)
+  (draw-graph (fn [_] (+ 20 (* (custom-random) 60))) 10 490)      
   )
 
 (defn update-state [state])
