@@ -4,7 +4,6 @@
 
 (defn custom-random []
   (- 1 (Math/pow (rand 1) 5)))
-(custom-random)
 
 (defn draw-line [points]
   (doseq [p (partition 2 1 points)]
